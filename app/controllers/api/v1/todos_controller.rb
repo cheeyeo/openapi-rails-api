@@ -18,10 +18,8 @@ module Api
       end
 
       def update
-        # puts "UPDATE PARAMS: #{params.inspect}"
-        # puts "TODO PARAMS: #{todo_params.inspect}"
         @todo = Todo.find(params[:id])
-        @todo.update(todo_params)
+        @todo.update!(todo_params)
         render json: @todo, status: :ok
       end
 

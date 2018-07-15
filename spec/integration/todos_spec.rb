@@ -145,6 +145,29 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
             eq(todo[:title])
         end
       end
+
+      response '400', 'Missing Request parameters' do
+        let(:todo) { {} }
+        run_test! do |response|
+          err = JSON.parse(response.body)
+          expect(err['message']).to eq('param is missing or the value is empty: todo')
+          expect(err['code']).to eq('400')
+        end
+      end
+
+      response '422', 'Invalid Request' do
+        let(:todo) { { title: '' } }
+
+        run_test! do |response|
+          resp = JSON.parse(response.body)
+          expect(resp['message']).to eq('Validation failed')
+
+          err = resp['errors'].first
+          expect(err['resource']).to eq('Todo')
+          expect(err['field']).to eq('title')
+          expect(err['code']).to eq('422')
+        end
+      end
     end
 
     delete 'Delete a todo' do
