@@ -7,7 +7,7 @@ conforms to the json-api spec
 
 OpenAPI  is a API description format for RESTFul web services.
 
-[Swagger]{:target="_blank"} provides the tooling around OpenAPI specification that allows you to build, develop, test and document your apis.
+[Swagger] provides the tooling around OpenAPI specification that allows you to build, develop, test and document your apis.
 
 One of the swagger tooling, ```swagger-ui``` presents a complete UI to test and validate your api in the browser.
 
