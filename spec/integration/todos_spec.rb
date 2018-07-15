@@ -98,7 +98,7 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
       end
     end
 
-    put 'Update a todo' do
+    patch 'Update a todo' do
       let(:todo2) { Todo.create!(title: 'Test todo') }
       let(:id) { todo2.id }
 
