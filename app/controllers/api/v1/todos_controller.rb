@@ -1,38 +1,49 @@
 module Api
   module V1
     class TodosController < ApplicationController
+      before_action :set_todo, only: [:show, :update, :destroy]
+
       def index
         @todos = Todo.all.order(created_at: :desc)
         render json: @todos, status: :ok
       end
 
       def show
-        @todo = Todo.find(params[:id])
         render json: @todo, status: :ok
       end
 
       def create
-        @todo = Todo.new(todo_params)
+        @todo = Todo.new(todo_attributes)
         @todo.save!
-        render json: @todo, status: :created
+        render json: @todo, status: :created, location: api_v1_todo_path(@todo)
       end
 
       def update
-        @todo = Todo.find(params[:id])
-        @todo.update!(todo_params)
+        @todo.update!(todo_attributes)
         render json: @todo, status: :ok
       end
 
       def destroy
-        @todo = Todo.find(params[:id])
         @todo.destroy
-        render status: :no_content
+        head 204
       end
 
       private
 
+      def set_todo
+        @todo = Todo.find(params[:id])
+      end
+
       def todo_params
-        params.require(:todo).permit(:title)
+        params.require(:data).permit(
+          :type,
+          :id,
+          attributes: [:title]
+        )
+      end
+
+      def todo_attributes
+        todo_params[:attributes] || {}
       end
     end
   end

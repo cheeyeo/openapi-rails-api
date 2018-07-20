@@ -7,8 +7,8 @@ class ValidationErrorsSerializer
 
   def serialize
     record.errors.details.map do |field, details|
-      details.map do |error_details|
-        ValidationErrorSerializer.new(record, field, error_details).serialize
+      details.map do |detail|
+        ValidationErrorSerializer.new(record, field, detail).serialize
       end
     end.flatten
   end

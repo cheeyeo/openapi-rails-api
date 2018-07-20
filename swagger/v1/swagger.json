@@ -63,25 +63,42 @@
           "Todos"
         ],
         "consumes": [
-          "application/json"
+          "application/vnd.api+json"
         ],
         "produces": [
           "application/vnd.api+json"
         ],
         "parameters": [
           {
-            "name": "todo",
+            "name": "data",
             "in": "body",
             "schema": {
               "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string"
-                }
-              },
               "required": [
-                "title"
-              ]
+                "data"
+              ],
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "todos"
+                    },
+                    "attributes": {
+                      "type": "object",
+                      "required": [
+                        "title"
+                      ],
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         ],
@@ -90,7 +107,7 @@
             "description": "Successful Operation"
           },
           "422": {
-            "description": "Invalid Request"
+            "description": "Invalid Todo Request"
           },
           "400": {
             "description": "Missing Request parameters"
@@ -113,6 +130,9 @@
           "Todos"
         ],
         "produces": [
+          "application/vnd.api+json"
+        ],
+        "consumes": [
           "application/vnd.api+json"
         ],
         "responses": {
@@ -166,7 +186,7 @@
           }
         }
       },
-      "put": {
+      "patch": {
         "summary": "Update a todo",
         "tags": [
           "Todos"
@@ -175,22 +195,39 @@
           "application/vnd.api+json"
         ],
         "consumes": [
-          "application/json"
+          "application/vnd.api+json"
         ],
         "parameters": [
           {
-            "name": "todo",
+            "name": "data",
             "in": "body",
             "schema": {
               "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string"
-                }
-              },
               "required": [
-                "title"
-              ]
+                "data"
+              ],
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "default": "todos"
+                    },
+                    "attributes": {
+                      "type": "object",
+                      "required": [
+                        "title"
+                      ],
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         ],
@@ -224,6 +261,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Missing Request parameters"
+          },
+          "422": {
+            "description": "Invalid Todo Request"
           }
         }
       },
@@ -233,6 +276,9 @@
           "Todos"
         ],
         "produces": [
+          "application/vnd.api+json"
+        ],
+        "consumes": [
           "application/vnd.api+json"
         ],
         "responses": {

@@ -7,13 +7,23 @@ class ValidationErrorSerializer
 
   def serialize
     {
-      resource: resource,
-      field: field,
-      code: code
+      status: code,
+      source: { "pointer": "/data/attributes/#{field}" },
+      title: 'Invalid Attributes',
+      detail: "#{field.capitalize} #{details}"
     }
   end
 
   private
+
+  def details
+    I18n.t(
+      @details[:error],
+      scope: [:errors, :messages],
+      locale: :api,
+      default: @details[:error].to_s
+    )
+  end
 
   def resource
     I18n.t(
