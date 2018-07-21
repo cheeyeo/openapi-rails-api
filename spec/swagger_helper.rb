@@ -19,7 +19,73 @@ RSpec.configure do |config|
         title: 'Todos API V1',
         version: 'v1'
       },
-      basePath: '/api/v1'
+      basePath: '/api/v1',
+      definitions: {
+        todo_parameter: {
+          type: 'object',
+          required: %w[data],
+          properties: {
+            data: {
+              type: :object,
+              required: %w[type attributes],
+              properties: {
+                type: {
+                  type: :string,
+                  example: 'todos'
+                },
+                attributes: {
+                  type: :object,
+                  required: %w[title],
+                  properties: {
+                    title: {
+                      type: :string,
+                      example: 'Example title'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        todo: {
+          type: 'object',
+          properties: {
+            id: { type: :string },
+            type: { type: :string },
+            attributes: {
+              type: :object,
+              properties: {
+                title: { type: :string }
+              }
+            },
+            links: {
+              type: :object,
+              properties: {
+                self: { type: :string }
+              }
+            }
+          }
+        },
+        todo_single: {
+          type: 'object',
+          required: %w[data],
+          properties: {
+            data: {
+              '$ref' => '#/definitions/todo'
+            }
+          }
+        },
+        todos_array: {
+          type: 'object',
+          required: %w[data],
+          properties: {
+            data: {
+              type: :array,
+              items: { '$ref' => '#/definitions/todo' }
+            }
+          }
+        }
+      }
     }
   }
 end

@@ -5,6 +5,93 @@
     "version": "v1"
   },
   "basePath": "/api/v1",
+  "definitions": {
+    "todo_parameter": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "object",
+          "required": [
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "example": "todos"
+            },
+            "attributes": {
+              "type": "object",
+              "required": [
+                "title"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "Example title"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "todo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            }
+          }
+        },
+        "links": {
+          "type": "object",
+          "properties": {
+            "self": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "todo_single": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/todo"
+        }
+      }
+    },
+    "todos_array": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/todo"
+          }
+        }
+      }
+    }
+  },
   "paths": {
     "/todos": {
       "get": {
@@ -16,49 +103,21 @@
         "produces": [
           "application/vnd.api+json"
         ],
+        "consumes": [
+          "application/vnd.api+json"
+        ],
         "responses": {
           "200": {
             "description": "Successful Operation",
             "schema": {
-              "type": "object",
-              "required": [
-                "data"
-              ],
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "type",
-                      "attributes"
-                    ],
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "attributes": {
-                        "type": "object",
-                        "properties": {
-                          "title": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+              "$ref": "#/definitions/todos_array"
             }
           }
         }
       },
       "post": {
         "summary": "Creates a todo",
+        "description": "Creates a single Todo",
         "tags": [
           "Todos"
         ],
@@ -73,38 +132,16 @@
             "name": "data",
             "in": "body",
             "schema": {
-              "type": "object",
-              "required": [
-                "data"
-              ],
-              "properties": {
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "example": "todos"
-                    },
-                    "attributes": {
-                      "type": "object",
-                      "required": [
-                        "title"
-                      ],
-                      "properties": {
-                        "title": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+              "$ref": "#/definitions/todo_parameter"
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "Successful Operation"
+            "description": "Successful Operation",
+            "schema": {
+              "$ref": "#/definitions/todo_single"
+            }
           },
           "422": {
             "description": "Invalid Todo Request"
@@ -126,6 +163,7 @@
       ],
       "get": {
         "summary": "Retrieve a todo",
+        "description": "Get a single Todo by ID",
         "tags": [
           "Todos"
         ],
@@ -139,55 +177,17 @@
           "200": {
             "description": "Successful Operation",
             "schema": {
-              "type": "object",
-              "required": [
-                "data"
-              ],
-              "properties": {
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "type": {
-                      "type": "string"
-                    },
-                    "attributes": {
-                      "type": "object",
-                      "properties": {
-                        "title": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+              "$ref": "#/definitions/todo_single"
             }
           },
           "404": {
-            "description": "Todo not found",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "string"
-                },
-                "message": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "code",
-                "message"
-              ]
-            }
+            "description": "Todo not found"
           }
         }
       },
       "patch": {
         "summary": "Update a todo",
+        "description": "Update a single Todo by ID",
         "tags": [
           "Todos"
         ],
@@ -202,32 +202,7 @@
             "name": "data",
             "in": "body",
             "schema": {
-              "type": "object",
-              "required": [
-                "data"
-              ],
-              "properties": {
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "default": "todos"
-                    },
-                    "attributes": {
-                      "type": "object",
-                      "required": [
-                        "title"
-                      ],
-                      "properties": {
-                        "title": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+              "$ref": "#/definitions/todo_parameter"
             }
           }
         ],
@@ -235,31 +210,7 @@
           "200": {
             "description": "Successful Operation",
             "schema": {
-              "type": "object",
-              "required": [
-                "data"
-              ],
-              "properties": {
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "type": {
-                      "type": "string"
-                    },
-                    "attributes": {
-                      "type": "object",
-                      "properties": {
-                        "title": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+              "$ref": "#/definitions/todo_single"
             }
           },
           "400": {
@@ -272,6 +223,7 @@
       },
       "delete": {
         "summary": "Delete a todo",
+        "description": "Delete a Todo via ID",
         "tags": [
           "Todos"
         ],

@@ -6,31 +6,12 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
       description 'List all the todos stored'
       tags 'Todos'
       produces 'application/vnd.api+json'
+      consumes 'application/vnd.api+json'
 
       response '200', 'Successful Operation' do
         let!(:todo) { Todo.create!(title: 'Test todo') }
 
-        schema type: :object,
-          required: %w[data],
-          properties: {
-            data: {
-              type: :array,
-              items: {
-                type: :object,
-                required: %w[id type attributes],
-                properties: {
-                  id: { type: :string },
-                  type: { type: :string },
-                  attributes: {
-                    type: :object,
-                    properties: {
-                      title: { type: :string }
-                    }
-                  }
-                }
-              }
-            }
-          }
+        schema '$ref' => '#/definitions/todos_array'
 
         run_test! do |response|
           resp = JSON.parse(response.body)
@@ -48,28 +29,13 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
     parameter name: :id, in: :path, type: :integer
 
     get 'Retrieve a todo' do
+      description 'Get a single Todo by ID'
       tags 'Todos'
       produces 'application/vnd.api+json'
       consumes 'application/vnd.api+json'
 
       response '200', 'Successful Operation' do
-        schema type: :object,
-          required: %w[data],
-          properties: {
-            data: {
-              type: :object,
-              properties: {
-                id: { type: :string },
-                type: { type: :string },
-                attributes: {
-                  type: :object,
-                  properties: {
-                    title: { type: :string }
-                  }
-                }
-              }
-            }
-          }
+        schema '$ref' => '#/definitions/todo_single'
 
         let(:todo) { Todo.create!(title: 'Test todo') }
         let(:id) { todo.id }
@@ -96,51 +62,20 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
     end
 
     patch 'Update a todo' do
+      description 'Update a single Todo by ID'
       tags 'Todos'
       produces 'application/vnd.api+json'
       consumes 'application/vnd.api+json'
 
       parameter name: :data, in: :body, schema: {
-        type: :object,
-        required: %w[data],
-        properties: {
-          data: {
-            type: :object,
-            properties: {
-              type: { type: :string, default: 'todos' },
-              attributes: {
-                type: :object,
-                required: %w[title],
-                properties: {
-                  title: { type: :string }
-                }
-              }
-            }
-          }
-        }
+        '$ref' => '#/definitions/todo_parameter'
       }
 
       let(:todo2) { Todo.create!(title: 'Test todo') }
       let(:id) { todo2.id }
 
       response '200', 'Successful Operation' do
-        schema type: :object,
-          required: %w[data],
-          properties: {
-            data: {
-              type: :object,
-              properties: {
-                id: { type: :string },
-                type: { type: :string },
-                attributes: {
-                  type: :object,
-                  properties: {
-                    title: { type: :string }
-                  }
-                }
-              }
-            }
-          }
+        schema '$ref' => '#/definitions/todo_single'
 
         let(:data) do
           {
@@ -183,6 +118,7 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
     end
 
     delete 'Delete a todo' do
+      description 'Delete a Todo via ID'
       tags 'Todos'
       produces 'application/vnd.api+json'
       consumes 'application/vnd.api+json'
@@ -197,34 +133,18 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
 
   path '/todos' do
     post 'Creates a todo' do
+      description 'Creates a single Todo'
       tags 'Todos'
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
 
       parameter name: :data, in: :body, schema: {
-        type: :object,
-        required: %w[data],
-        properties: {
-          data: {
-            type: :object,
-            properties: {
-              type: {
-                type: :string,
-                example: 'todos'
-              },
-              attributes: {
-                type: :object,
-                required: %w[title],
-                properties: {
-                  title: { type: :string }
-                }
-              }
-            }
-          }
-        }
+        '$ref' => '#/definitions/todo_parameter'
       }
 
       response '201', 'Successful Operation' do
+        schema '$ref' => '#/definitions/todo_single'
+
         let(:data) do
           {
             data: { type: 'todos', attributes: { title: 'my foo' } }
