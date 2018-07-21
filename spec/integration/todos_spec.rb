@@ -185,6 +185,17 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
           expect(response.status).to eq(400)
         end
       end
+
+      response '400', "Missing `type` in Request parameters" do
+        let(:data) { { data: { attributes: { title: 'my foo' } } } }
+        run_test! do |response|
+          err = JSON.parse(response.body)['errors'].first
+          expect(err['detail']).to eq('param is missing or the value is empty: type')
+          expect(err['status']).to eq('400')
+          expect(err['title']).to eq("Missing `data` Member at document's top level")
+          expect(response.status).to eq(400)
+        end
+      end
     end
   end
 end

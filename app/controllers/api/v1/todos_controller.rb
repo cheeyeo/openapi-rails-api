@@ -35,11 +35,9 @@ module Api
       end
 
       def todo_params
-        params.require(:data).permit(
-          :type,
-          :id,
-          attributes: [:title]
-        )
+        params.require(:data).permit(:type, :id, attributes: [:title]).tap do |todo_params|
+          todo_params.require(:type)
+        end
       end
 
       def todo_attributes
