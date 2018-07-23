@@ -31,5 +31,8 @@ module TodosApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    config.read_encrypted_secrets = true
+    config.require_master_key = true
   end
 end

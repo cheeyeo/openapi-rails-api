@@ -29,4 +29,13 @@ in ```config/initializers/rswag-api.rb```
 
 * Add authentication and integration specs
 
-* Refactor the error responses to be json-api compliant
+
+# About using Rails.application.credentials
+
+Can only edit properly using the following command:
+
+```
+EDITOR="vim" bin/rails credentials:edit
+
+bin/rails credentials:show
+```

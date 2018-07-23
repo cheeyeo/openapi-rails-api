@@ -1,6 +1,8 @@
 module Api
   module V1
     class TodosController < ApplicationController
+      before_action :doorkeeper_authorize! # Requires access token for all actions
+
       before_action :set_todo, only: [:show, :update, :destroy]
 
       def index
