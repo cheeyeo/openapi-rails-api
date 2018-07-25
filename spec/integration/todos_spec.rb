@@ -17,7 +17,7 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
       security [oAuthScheme: []]
 
       response '200', 'Successful Operation' do
-        schema '$ref' => '#/definitions/todos_array'
+        schema '$ref' => '#/definitions/TodoList'
 
         let!(:todo) { Todo.create!(title: 'Test todo') }
         let!(:Authorization) { "Bearer #{token.token}" }
@@ -55,7 +55,7 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
       security [oAuthScheme: []]
 
       response '200', 'Successful Operation' do
-        schema '$ref' => '#/definitions/todo_single'
+        schema '$ref' => '#/definitions/Todo'
 
         let(:todo) { Todo.create!(title: 'Test todo') }
         let(:id) { todo.id }
@@ -104,14 +104,14 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
       security [oAuthScheme: []]
 
       parameter name: :data, in: :body, schema: {
-        '$ref' => '#/definitions/todo_parameter'
+        '$ref' => '#/definitions/TodoApiParameter'
       }
 
       let(:todo2) { Todo.create!(title: 'Test todo') }
       let(:id) { todo2.id }
 
       response '200', 'Successful Operation' do
-        schema '$ref' => '#/definitions/todo_single'
+        schema '$ref' => '#/definitions/Todo'
 
         let(:data) do
           {
@@ -206,13 +206,13 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
       produces 'application/vnd.api+json'
 
       parameter name: :data, in: :body, schema: {
-        '$ref' => '#/definitions/todo_parameter'
+        '$ref' => '#/definitions/TodoApiParameter'
       }
 
       security [oAuthScheme: []]
 
       response '201', 'Successful Operation' do
-        schema '$ref' => '#/definitions/todo_single'
+        schema '$ref' => '#/definitions/Todo'
 
         let(:data) do
           {

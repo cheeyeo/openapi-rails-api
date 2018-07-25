@@ -21,7 +21,45 @@ RSpec.configure do |config|
       },
       basePath: '/api/v1',
       definitions: {
-        todo_parameter: {
+        'Todo': {
+          type: 'object',
+          required: %w[data],
+          properties: {
+            data: {
+              '$ref' => '#/definitions/TodoDetail'
+            }
+          }
+        },
+        'TodoDetail': {
+          type: 'object',
+          properties: {
+            id: { type: :string },
+            type: { type: :string },
+            attributes: {
+              type: :object,
+              properties: {
+                title: { type: :string }
+              }
+            },
+            links: {
+              type: :object,
+              properties: {
+                self: { type: :string }
+              }
+            }
+          }
+        },
+        'TodoList': {
+          type: 'object',
+          required: %w[data],
+          properties: {
+            data: {
+              type: :array,
+              items: { '$ref' => '#/definitions/TodoDetail' }
+            }
+          }
+        },
+        'TodoApiParameter': {
           type: 'object',
           required: %w[data],
           properties: {
@@ -47,44 +85,6 @@ RSpec.configure do |config|
             }
           }
         },
-        todo: {
-          type: 'object',
-          properties: {
-            id: { type: :string },
-            type: { type: :string },
-            attributes: {
-              type: :object,
-              properties: {
-                title: { type: :string }
-              }
-            },
-            links: {
-              type: :object,
-              properties: {
-                self: { type: :string }
-              }
-            }
-          }
-        },
-        todo_single: {
-          type: 'object',
-          required: %w[data],
-          properties: {
-            data: {
-              '$ref' => '#/definitions/todo'
-            }
-          }
-        },
-        todos_array: {
-          type: 'object',
-          required: %w[data],
-          properties: {
-            data: {
-              type: :array,
-              items: { '$ref' => '#/definitions/todo' }
-            }
-          }
-        }
       },
       securityDefinitions: {
         oAuthScheme: {

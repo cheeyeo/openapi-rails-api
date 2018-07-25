@@ -9,6 +9,8 @@ class CustomTokensController < Doorkeeper::TokensController
 
       params[:code] = tmp_code
       params[:state] = tmp_state
+
+      clear_access_token
     end
 
     response = authorize_response
@@ -23,5 +25,23 @@ class CustomTokensController < Doorkeeper::TokensController
     handle_token_exception err
   rescue Doorkeeper::Errors::DoorkeeperError => e
     handle_token_exception e
+  end
+
+  # clear_access_token deletes the AccessToken if it exists so the Swagger UI
+  # can re-generate it after a refresh; the UI does not store the token
+  def clear_access_token
+    user = User.where(email: 'noop@swagger.com').first
+
+    generated_jwt = Doorkeeper::JWT.generate(
+      resource_owner_id: user.id,
+      application: {
+        uid: Rails.application.credentials.oauth[:swagger][:client_id]
+      }
+    )
+
+    access_token = Doorkeeper::AccessToken.where(token: generated_jwt).first
+    Rails.logger.debug("FOUND ANY EXISTING ACCESS TOKEN: #{access_token.inspect}")
+
+    access_token.destroy! if access_token.present?
   end
 end

@@ -6,7 +6,59 @@
   },
   "basePath": "/api/v1",
   "definitions": {
-    "todo_parameter": {
+    "Todo": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/TodoDetail"
+        }
+      }
+    },
+    "TodoDetail": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            }
+          }
+        },
+        "links": {
+          "type": "object",
+          "properties": {
+            "self": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "TodoList": {
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TodoDetail"
+          }
+        }
+      }
+    },
+    "TodoApiParameter": {
       "type": "object",
       "required": [
         "data"
@@ -35,58 +87,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "todo": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        },
-        "attributes": {
-          "type": "object",
-          "properties": {
-            "title": {
-              "type": "string"
-            }
-          }
-        },
-        "links": {
-          "type": "object",
-          "properties": {
-            "self": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
-    "todo_single": {
-      "type": "object",
-      "required": [
-        "data"
-      ],
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/todo"
-        }
-      }
-    },
-    "todos_array": {
-      "type": "object",
-      "required": [
-        "data"
-      ],
-      "properties": {
-        "data": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/todo"
           }
         }
       }
@@ -130,7 +130,7 @@
           "200": {
             "description": "Successful Operation",
             "schema": {
-              "$ref": "#/definitions/todos_array"
+              "$ref": "#/definitions/TodoList"
             }
           },
           "401": {
@@ -155,7 +155,7 @@
             "name": "data",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/todo_parameter"
+              "$ref": "#/definitions/TodoApiParameter"
             }
           }
         ],
@@ -170,7 +170,7 @@
           "201": {
             "description": "Successful Operation",
             "schema": {
-              "$ref": "#/definitions/todo_single"
+              "$ref": "#/definitions/Todo"
             }
           },
           "422": {
@@ -214,7 +214,7 @@
           "200": {
             "description": "Successful Operation",
             "schema": {
-              "$ref": "#/definitions/todo_single"
+              "$ref": "#/definitions/Todo"
             }
           },
           "404": {
@@ -249,7 +249,7 @@
             "name": "data",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/todo_parameter"
+              "$ref": "#/definitions/TodoApiParameter"
             }
           }
         ],
@@ -257,7 +257,7 @@
           "200": {
             "description": "Successful Operation",
             "schema": {
-              "$ref": "#/definitions/todo_single"
+              "$ref": "#/definitions/Todo"
             }
           },
           "400": {

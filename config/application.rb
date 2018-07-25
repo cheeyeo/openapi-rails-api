@@ -32,10 +32,5 @@ module TodosApi
 
     config.read_encrypted_secrets = true
     config.require_master_key = true
-
-    # Note: below require is needed due to following issue:
-    # https://github.com/rails/rails/issues/25525
-    # require_relative '../app/middleware/rack/swagger'
-    # config.middleware.use Rack::Swagger
   end
 end
