@@ -7,4 +7,14 @@ Rswag::Ui.configure do |c|
   # then the list below should correspond to the relative paths for those endpoints
 
   c.swagger_endpoint '/api-docs/v1/swagger.json', 'API V1 Docs'
+  c.oauth_config_object = {
+    clientId: Rails.application.credentials.oauth[:swagger][:client_id],
+    clientSecret: Rails.application.credentials.oauth[:swagger][:client_secret],
+    additionalQueryStringParams: {
+      # redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+      redirect_uri: 'http://localhost:3000/oauth-redirect',
+      username: 'noop@swagger.com',
+      response_type: 'code'
+    }
+  }
 end

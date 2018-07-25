@@ -10,8 +10,6 @@ require "action_controller/railtie"
 require "action_mailer/railtie"
 require "action_view/railtie"
 require "action_cable/engine"
-# require "sprockets/railtie"
-# require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -34,5 +32,10 @@ module TodosApi
 
     config.read_encrypted_secrets = true
     config.require_master_key = true
+
+    # Note: below require is needed due to following issue:
+    # https://github.com/rails/rails/issues/25525
+    # require_relative '../app/middleware/rack/swagger'
+    # config.middleware.use Rack::Swagger
   end
 end

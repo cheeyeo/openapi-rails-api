@@ -85,6 +85,18 @@ RSpec.configure do |config|
             }
           }
         }
+      },
+      securityDefinitions: {
+        oAuthScheme: {
+          in: :header,
+          type: 'oauth2',
+          require: true,
+          description: 'OAuth2 authorization code flow',
+          flow: 'authorizationCode',
+          scopes: {},
+          authorizationUrl: '/oauth/authorize',
+          tokenUrl: '/oauth/token'
+        }
       }
     }
   }

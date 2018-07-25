@@ -1,6 +1,12 @@
 require 'swagger_helper'
 
 describe 'Todos API', swagger_doc: 'v1/swagger.json' do
+  let!(:application) { Doorkeeper::Application.create!(name: 'Todos app', redirect_uri: 'urn:ietf:wg:oauth:2.0:oob') }
+
+  let!(:user) { User.create!(name: 'test user', email: 'test@example.com', password: 'testing', password_confirmation: 'testing') }
+
+  let!(:token) { Doorkeeper::AccessToken.create!(application_id: application.id, resource_owner_id: user.id) }
+
   path '/todos' do
     get 'List todos' do
       description 'List all the todos stored'
@@ -8,10 +14,13 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
       produces 'application/vnd.api+json'
       consumes 'application/vnd.api+json'
 
-      response '200', 'Successful Operation' do
-        let!(:todo) { Todo.create!(title: 'Test todo') }
+      security [oAuthScheme: []]
 
+      response '200', 'Successful Operation' do
         schema '$ref' => '#/definitions/todos_array'
+
+        let!(:todo) { Todo.create!(title: 'Test todo') }
+        let!(:Authorization) { "Bearer #{token.token}" }
 
         run_test! do |response|
           resp = JSON.parse(response.body)
@@ -19,6 +28,15 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
           expect(res['type']).to eq('todos')
           expect(Integer(res['id'])).to eq(todo.id)
           expect(res['attributes']['title']).to eq(todo.title)
+        end
+      end
+
+      response '401', 'Unauthorized' do
+        let!(:todo) { Todo.create!(title: 'Test todo') }
+        let!(:Authorization) {}
+
+        run_test! do |response|
+          expect(response.status).to eq(401)
         end
       end
     end
@@ -34,11 +52,15 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
       produces 'application/vnd.api+json'
       consumes 'application/vnd.api+json'
 
+      security [oAuthScheme: []]
+
       response '200', 'Successful Operation' do
         schema '$ref' => '#/definitions/todo_single'
 
         let(:todo) { Todo.create!(title: 'Test todo') }
         let(:id) { todo.id }
+        let!(:Authorization) { "Bearer #{token.token}" }
+
         run_test! do |response|
           resp = JSON.parse(response.body)
           res = resp['data']
@@ -50,6 +72,7 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
 
       response '404', 'Todo not found' do
         let(:id) { 'invalid' }
+        let!(:Authorization) { "Bearer #{token.token}" }
 
         run_test! do |response|
           res = JSON.parse(response.body)['errors'].first
@@ -59,6 +82,17 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
           expect(response.status).to eq(404)
         end
       end
+
+      response '401', 'Unauthorized' do
+        let(:todo) { Todo.create!(title: 'Test todo') }
+        let(:id) { todo.id }
+
+        let!(:Authorization) {}
+
+        run_test! do |response|
+          expect(response.status).to eq(401)
+        end
+      end
     end
 
     patch 'Update a todo' do
@@ -66,6 +100,8 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
       tags 'Todos'
       produces 'application/vnd.api+json'
       consumes 'application/vnd.api+json'
+
+      security [oAuthScheme: []]
 
       parameter name: :data, in: :body, schema: {
         '$ref' => '#/definitions/todo_parameter'
@@ -83,6 +119,8 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
           }
         end
 
+        let!(:Authorization) { "Bearer #{token.token}" }
+
         run_test! do |response|
           res = JSON.parse(response.body)
           expect(res['data']['attributes']['title']).to \
@@ -92,6 +130,8 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
 
       response '400', 'Missing Request parameters' do
         let(:data) { {} }
+        let!(:Authorization) { "Bearer #{token.token}" }
+
         run_test! do |response|
           err = JSON.parse(response.body)['errors'].first
           expect(err['status']).to eq('400')
@@ -101,12 +141,28 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
         end
       end
 
+      response '401', 'Unauthorized' do
+        let(:data) do
+          {
+            data: { type: 'todos', attributes: { title: 'my updated title' } }
+          }
+        end
+
+        let!(:Authorization) {}
+
+        run_test! do |response|
+          expect(response.status).to eq(401)
+        end
+      end
+
       response '422', 'Invalid Todo Request' do
         let(:data) do
           {
             data: { type: 'todos', attributes: { title: '' } }
           }
         end
+
+        let!(:Authorization) { "Bearer #{token.token}" }
 
         run_test! do |response|
           resp = JSON.parse(response.body)['errors'].first
@@ -123,10 +179,21 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
       produces 'application/vnd.api+json'
       consumes 'application/vnd.api+json'
 
+      security [oAuthScheme: []]
+
+      let(:todo) { Todo.create!(title: 'Test todo') }
+      let(:id) { todo.id }
+
       response '204', 'Successful Operation' do
-        let(:todo) { Todo.create!(title: 'Test todo') }
-        let(:id) { todo.id }
+        let!(:Authorization) { "Bearer #{token.token}" }
         run_test!
+      end
+
+      response '401', 'Unauthorized' do
+        let!(:Authorization) {}
+        run_test! do |response|
+          expect(response.status).to eq(401)
+        end
       end
     end
   end
@@ -142,6 +209,8 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
         '$ref' => '#/definitions/todo_parameter'
       }
 
+      security [oAuthScheme: []]
+
       response '201', 'Successful Operation' do
         schema '$ref' => '#/definitions/todo_single'
 
@@ -150,6 +219,8 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
             data: { type: 'todos', attributes: { title: 'my foo' } }
           }
         end
+
+        let!(:Authorization) { "Bearer #{token.token}" }
 
         run_test! do |response|
           todo = Todo.last
@@ -167,6 +238,8 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
           }
         end
 
+        let!(:Authorization) { "Bearer #{token.token}" }
+
         run_test! do |response|
           resp = JSON.parse(response.body)['errors'].first
           expect(resp['title']).to eq('Invalid Attributes')
@@ -177,6 +250,8 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
 
       response '400', 'Missing Request parameters' do
         let(:data) { {} }
+        let!(:Authorization) { "Bearer #{token.token}" }
+
         run_test! do |response|
           err = JSON.parse(response.body)['errors'].first
           expect(err['detail']).to eq('param is missing or the value is empty: data')
@@ -188,6 +263,8 @@ describe 'Todos API', swagger_doc: 'v1/swagger.json' do
 
       response '400', "Missing `type` in Request parameters" do
         let(:data) { { data: { attributes: { title: 'my foo' } } } }
+        let!(:Authorization) { "Bearer #{token.token}" }
+
         run_test! do |response|
           err = JSON.parse(response.body)['errors'].first
           expect(err['detail']).to eq('param is missing or the value is empty: type')

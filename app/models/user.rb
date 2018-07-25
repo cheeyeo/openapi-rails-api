@@ -10,4 +10,8 @@ class User < ApplicationRecord
   has_many :access_tokens, class_name: 'Doorkeeper::AccessToken',
                            foreign_key: :resource_owner_id,
                            dependent: :delete_all # or :destroy if you need callbacks
+
+  def self.swagger_user?(user)
+    user.name == 'Swagger UI' && user.email == 'noop@swagger.com'
+  end
 end

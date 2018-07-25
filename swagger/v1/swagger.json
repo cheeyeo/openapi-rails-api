@@ -92,6 +92,19 @@
       }
     }
   },
+  "securityDefinitions": {
+    "oAuthScheme": {
+      "in": "header",
+      "type": "oauth2",
+      "require": true,
+      "description": "OAuth2 authorization code flow",
+      "flow": "authorizationCode",
+      "scopes": {
+      },
+      "authorizationUrl": "/oauth/authorize",
+      "tokenUrl": "/oauth/token"
+    }
+  },
   "paths": {
     "/todos": {
       "get": {
@@ -106,12 +119,22 @@
         "consumes": [
           "application/vnd.api+json"
         ],
+        "security": [
+          {
+            "oAuthScheme": [
+
+            ]
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Operation",
             "schema": {
               "$ref": "#/definitions/todos_array"
             }
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
@@ -136,6 +159,13 @@
             }
           }
         ],
+        "security": [
+          {
+            "oAuthScheme": [
+
+            ]
+          }
+        ],
         "responses": {
           "201": {
             "description": "Successful Operation",
@@ -147,7 +177,7 @@
             "description": "Invalid Todo Request"
           },
           "400": {
-            "description": "Missing Request parameters"
+            "description": "Missing `type` in Request parameters"
           }
         }
       }
@@ -173,6 +203,13 @@
         "consumes": [
           "application/vnd.api+json"
         ],
+        "security": [
+          {
+            "oAuthScheme": [
+
+            ]
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Operation",
@@ -182,6 +219,9 @@
           },
           "404": {
             "description": "Todo not found"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
@@ -196,6 +236,13 @@
         ],
         "consumes": [
           "application/vnd.api+json"
+        ],
+        "security": [
+          {
+            "oAuthScheme": [
+
+            ]
+          }
         ],
         "parameters": [
           {
@@ -216,6 +263,9 @@
           "400": {
             "description": "Missing Request parameters"
           },
+          "401": {
+            "description": "Unauthorized"
+          },
           "422": {
             "description": "Invalid Todo Request"
           }
@@ -233,9 +283,19 @@
         "consumes": [
           "application/vnd.api+json"
         ],
+        "security": [
+          {
+            "oAuthScheme": [
+
+            ]
+          }
+        ],
         "responses": {
           "204": {
             "description": "Successful Operation"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }

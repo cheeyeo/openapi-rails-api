@@ -144,14 +144,14 @@ Doorkeeper.configure do
   #   http://tools.ietf.org/html/rfc6819#section-4.4.2
   #   http://tools.ietf.org/html/rfc6819#section-4.4.3
   #
-  grant_flows %w[authorization_code]
+  grant_flows %w[authorization_code client_credentials]
 
   # Hook into the strategies' request & response life-cycle in case your
   # application needs advanced customization or logging:
   #
-  # before_successful_strategy_response do |request|
-  #   puts "BEFORE HOOK FIRED! #{request}"
-  # end
+  before_successful_strategy_response do |request|
+    #puts "BEFORE HOOK FIRED! #{request.inspect}"
+  end
   #
   # after_successful_strategy_response do |request, response|
   #   puts "AFTER HOOK FIRED! #{request}, #{response}"
@@ -175,9 +175,10 @@ Doorkeeper.configure do
   # so that the user skips the authorization step.
   # For example if dealing with a trusted application.
   #
-  # skip_authorization do |resource_owner, client|
-  #   client.superapp? or resource_owner.admin?
-  # end
+  skip_authorization do |resource_owner, client|
+    # client.superapp? or resource_owner.admin?
+    User.swagger_user?(resource_owner) && ApplicationChecker.swagger_client?(client)
+  end
 
   # WWW-Authenticate Realm (default "Doorkeeper").
   #
