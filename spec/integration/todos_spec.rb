@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-describe 'Todos API', swagger_doc: 'v1/swagger.json' do
+describe 'Todos API', :db, swagger_doc: 'v1/swagger.json' do
   let!(:application) { Doorkeeper::Application.create!(name: 'Todos app', redirect_uri: 'urn:ietf:wg:oauth:2.0:oob') }
 
   let!(:user) { User.create!(name: 'test user', email: 'test@example.com', password: 'testing', password_confirmation: 'testing') }
