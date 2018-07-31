@@ -7,22 +7,10 @@ This example application also uses `oauth2` with `doorkeeper` and integrating th
 
 # Running the example:
 
-You need to create a default `Doorkeeper::Application` and `User` model for the
-Swagger UI in order for it to work with oauth.
+Run `bin/setup` which will also run the `db:seed` task to create the Swagger user and application models needed for oauth.
 
-Ensure that the details matches that of `config/initializers/rswag-ui.rb`
+Ensure that the details matches that of `config/initializers/rswag-ui.rb`, especially for the redirect uris and the client id and secret.
 
-```
-a = Doorkeeper::Application.new
-a.name = 'Test Client'
-a.redirect_uri = 'http://localhost:3000/oauth-redirect' # => points to where the oauth-redirect.html file is located for Swagger UI
-
-a.save!
-
-# => create a user model for the swagger UI
-User.create!(email: 'noop@swagger.com', password: 'password', password_confirmation: 'password')
-
-```
 
 To generate the swagger json file after editing:
 ```
@@ -78,11 +66,9 @@ in ```config/initializers/rswag-api.rb```
 
 # TODO
 
-* Create setup file for swagger UI
+* Add api endpoint and specs for User model
 
 * Create / learn more about OAUTH scopes and update the openapi specs
-
-* Add more specs for User model
 
 * Add TodoListItem and update api specifications
 
