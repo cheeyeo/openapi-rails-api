@@ -1,7 +1,7 @@
 class CustomDoorkeeperController < ApplicationController
-  Rails.logger.debug "INSIDE CUSTOM DOORKEEPER CONTROLLER!!!"
-  # TODO: Below does not work as the inheritance chain does not bubble up??
-  # But we can rescue it from the oauth client itself
+  # Issue: CustomTokensController inherits from Doorkeeper::ApplicationMetalController
+  # which means it will not call below
+
   rescue_from ActiveRecord::RecordInvalid, with:
     :render_unprocessable_entity_response
 

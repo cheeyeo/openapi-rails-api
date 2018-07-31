@@ -1,7 +1,16 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+# Create swagger application mode
+# redirect-uri must match value in config/initializers/rswag-ui.rb
+# Need to also update the Rails.application.credentials.oauth swagger
+# blocks with the uid and secret with values from created model below
+uri = Rails.application.routes.default_url_options[:host]
+Doorkeeper::Application.create!(
+  name: 'Swagger UI',
+  redirect_uri:  uri + '/oauth-redirect'
+)
+
+User.create!(
+  name: 'Swagger UI',
+  email: 'noop@swagger.com',
+  password: 'password',
+  password_confirmation: 'password'
+)

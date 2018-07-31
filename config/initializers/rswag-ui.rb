@@ -12,7 +12,7 @@ Rswag::Ui.configure do |c|
     clientSecret: Rails.application.credentials.oauth[:swagger][:client_secret],
     additionalQueryStringParams: {
       # redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
-      redirect_uri: 'http://localhost:3000/oauth-redirect',
+      redirect_uri: Rails.application.routes.default_url_options[:host] + '/oauth-redirect',
       username: 'noop@swagger.com',
       response_type: 'code'
     }
